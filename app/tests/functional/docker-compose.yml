@@ -1,0 +1,63 @@
+version: '3.5'
+
+services:
+  auth_api:
+    build: ../../
+    image: auth-image
+    environment:
+      - AUTH_API_HOST=auth_api
+      - AUTH_API_PORT=8000
+      - AUTH_REDIS_HOST=redis_test
+      - AUTH_REDIS_PORT=6379
+      - AUTH_POSTGRES_NAME=auth_db
+      - AUTH_POSTGRES_HOST=postgres_test
+      - AUTH_POSTGRES_PORT=5432
+      - AUTH_POSTGRES_USER=admin_auth_db
+      - AUTH_POSTGRES_PASSWORD=123qwe
+      - AUTH_ADMIN_NAME=admin
+      - AUTH_ADMIN_PASSWORD=123
+      - PYTHONPATH=/app/
+    depends_on:
+      - postgres_test
+      - redis_test
+    ports:
+      - '8000:8000'
+
+  auth_api_test:
+    image: auth-image
+    environment:
+      - AUTH_API_HOST=auth_api
+      - AUTH_API_PORT=8000
+      - AUTH_REDIS_HOST=redis_test
+      - AUTH_REDIS_PORT=6379
+      - AUTH_POSTGRES_NAME=auth_db
+      - AUTH_POSTGRES_HOST=postgres_test
+      - AUTH_POSTGRES_PORT=5432
+      - AUTH_POSTGRES_USER=admin_auth_db
+      - AUTH_POSTGRES_PASSWORD=123qwe
+      - AUTH_ADMIN_NAME=admin
+      - AUTH_ADMIN_PASSWORD=123
+      - PYTHONPATH=/app/
+    entrypoint: >
+      sh -c "pip install -r ./tests/functional/requirements.txt
+      && python3 ./tests/functional/utils/wait_for_redis.py
+      && pytest ./tests/functional/src"
+    depends_on:
+      - auth_api
+
+
+  postgres_test:
+    image: postgres:13
+
+    environment:
+      - POSTGRES_USER=admin_auth_db
+      - POSTGRES_PASSWORD=123qwe
+      - POSTGRES_DB=auth_db
+    ports:
+      - '5432:5432'
+
+
+  redis_test:
+    image: redis:latest
+    ports:
+      - '6379:6379'

@@ -1,0 +1,64 @@
+version: '3.5'
+
+services:
+  auth_api:
+    build: ./app/
+    networks:
+      - auth_api
+    expose:
+      - ${AUTH_API_PORT}
+    env_file:
+      - .env
+
+  auth_nginx:
+    image: nginx:latest
+    restart: always
+    expose:
+      - "80"
+    networks:
+      - nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/configs:/etc/nginx/conf.d:ro
+    depends_on:
+      - auth_api
+    ports:
+      - "80:80"
+
+  auth_postgres:
+    image: postgres:13
+    networks:
+      - auth_postgres
+    expose:
+      - ${AUTH_POSTGRES_PORT}
+    environment:
+      - POSTGRES_USER=${AUTH_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${AUTH_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${AUTH_POSTGRES_NAME}
+    volumes:
+      - auth_pg_data:/var/lib/postgresql/data/
+
+
+  auth_redis:
+    image: redis:latest
+    expose:
+      - ${AUTH_REDIS_PORT}
+    networks:
+      - auth_redis
+    volumes:
+      - auth_redis_data:/var/lib/redis/data
+
+
+volumes:
+  auth_pg_data:
+  auth_redis_data:
+
+networks:
+  auth_postgres:
+    name: movies_net
+  auth_redis:
+    name: movies_net
+  nginx:
+    name: movies_net
+  auth_api:
+    name: movies_net
