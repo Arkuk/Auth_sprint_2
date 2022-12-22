@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from passlib.hash import argon2
 
+from services.oauth import oauth
 from api import api
 from db.postgres import db
 from db.redis import jwt_redis_blocklist
@@ -16,6 +17,8 @@ from models.user_role import user_role
 
 def create_app(config=None):
     app = Flask(__name__)
+    # инициализация oauth
+    oauth.init_app(app)
     # загрузка настроек для Flask
     app.config.from_object("core.config.Settings")
     # батарейка для миграций
@@ -26,6 +29,8 @@ def create_app(config=None):
     api.init_app(app)
     # инициализация jwt
     jwt = JWTManager(app)
+
+
 
     @app.cli.command("create-roles")
     def create_roles():

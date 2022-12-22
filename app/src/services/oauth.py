@@ -7,13 +7,13 @@ from sqlalchemy.exc import NoResultFound
 
 from db.postgres import db
 from core.config import settings
-from services.auth import auth_service
+# from services.auth import auth_service
 from models.user import SocialAccount
 
 oauth = OAuth()
 
 
-class BaseClassOauth:
+class OauthService:
     def __init__(self,
                  name: str,
                  client_id: str,
@@ -46,8 +46,7 @@ class BaseClassOauth:
         return oauth.create_client(self.name)
 
     def redirect_to_provider(self):
-        redirect_uri = url_for(self.redirect_url, _external=True)
-        return self.client.authorize_redirect(redirect_uri)
+        return self.client.authorize_redirect(self.redirect_url)
 
     def get_tokens_auth(self):
         return self.client.authorize_access_token()
@@ -75,5 +74,13 @@ class BaseClassOauth:
         return ''.join(secrets_choice(alphabet) for _ in range(10))
 
 
-
-
+def get_yandex():
+    return OauthService(
+        name='yandex',
+        client_id=settings.YANDEX_OAUTH_CLIENT_ID,
+        client_secret=settings.YANDEX_OAUTH_CLIENT_SECRET,
+        access_token_url=settings.YANDEX_OAUTH_ACCESS_TOKEN_URL,
+        authorize_url=settings.YANDEX_OAUTH_AUTHORIZE_URL,
+        userinfo_endpoint=settings.YANDEX_OAUTH_USERINFO_ENDPOINT,
+        client_kwargs=settings.YANDEX_OAUTH_CLIENT_KWARGS
+    )

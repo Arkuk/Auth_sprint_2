@@ -5,7 +5,7 @@ from schemas.token import responses_tokens
 from schemas.user import (user_schema_login, user_schema_register,
                           user_schema_response)
 from services.auth import auth_service
-from services.oauth import oauth_service
+from services.oauth import get_yandex
 
 api = Namespace(
     "API для сайта и личного кабинета. Анонимные пользователи", validate=True
@@ -46,5 +46,7 @@ class Login(Resource):
 
 @api.route("/identity/login/<provider>")
 class IdentityLogin(Resource):
-    def post(self, provider):
-        pass
+    def get(self, provider):
+        print(provider)
+        asd = get_yandex()
+        return asd.redirect_to_provider()

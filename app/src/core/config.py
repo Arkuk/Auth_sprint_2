@@ -22,14 +22,15 @@ class Settings(object):
     RESTX_MASK_SWAGGER = False
     PAGE_LIMIT_HISTORY = 10
     SECRET_KEY = 'zima-holoda'
-    OAUTH_REDIRECT_URL = '/me'
+    OAUTH_REDIRECT_URL = 'http://localhost'
 
     # yandex oauth
-    OAUTH_CLIENT_ID_YANDEX = os.getenv("OAUTH_CLIENT_ID_YANDEX")
-    OAUTH_CLIENT_SECRET_YANDEX = os.getenv("OAUTH_CLIENT_SECRET_YANDEX")
-    OAUTH_CLIENT_ID_YANDEX = '/me'
-    OAUTH_CLIENT_ID_YANDEX = '/me'
-    OAUTH_CLIENT_ID_YANDEX = '/me'
+    YANDEX_OAUTH_CLIENT_ID = os.getenv("YANDEX_OAUTH_CLIENT_ID")
+    YANDEX_OAUTH_CLIENT_SECRET = os.getenv("YANDEX_OAUTH_CLIENT_SECRET")
+    YANDEX_OAUTH_ACCESS_TOKEN_URL = 'https://oauth.yandex.ru/token'
+    YANDEX_OAUTH_AUTHORIZE_URL = 'https://oauth.yandex.ru/authorize'
+    YANDEX_OAUTH_USERINFO_ENDPOINT = 'https://login.yandex.ru/info'
+    YANDEX_OAUTH_CLIENT_KWARGS = {'scope': 'login:info login:email'}
 
 
 settings = Settings()
