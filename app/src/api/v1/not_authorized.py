@@ -5,11 +5,11 @@ from schemas.token import responses_tokens
 from schemas.user import (user_schema_login, user_schema_register,
                           user_schema_response)
 from services.auth import auth_service
+from services.oauth import oauth_service
 
 api = Namespace(
     "API для сайта и личного кабинета. Анонимные пользователи", validate=True
 )
-
 
 user_schema_register = api.model("UserSchemaRegister", user_schema_register)
 user_schema_login = api.model("UserSchemaLogin", user_schema_login)
@@ -42,3 +42,9 @@ class Login(Resource):
         user_agent = parser.parse_args()["User-Agent"]
         result = auth_service.login_user(api.payload, user_agent)
         return result, 200
+
+
+@api.route("/identity/login/<provider>")
+class IdentityLogin(Resource):
+    def post(self, provider):
+        pass

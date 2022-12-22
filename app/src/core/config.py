@@ -21,6 +21,15 @@ class Settings(object):
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     RESTX_MASK_SWAGGER = False
     PAGE_LIMIT_HISTORY = 10
+    SECRET_KEY = 'zima-holoda'
+    OAUTH_REDIRECT_URL = '/me'
+
+    # yandex oauth
+    OAUTH_CLIENT_ID_YANDEX = os.getenv("OAUTH_CLIENT_ID_YANDEX")
+    OAUTH_CLIENT_SECRET_YANDEX = os.getenv("OAUTH_CLIENT_SECRET_YANDEX")
+    OAUTH_CLIENT_ID_YANDEX = '/me'
+    OAUTH_CLIENT_ID_YANDEX = '/me'
+    OAUTH_CLIENT_ID_YANDEX = '/me'
 
 
 settings = Settings()

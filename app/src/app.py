@@ -8,7 +8,8 @@ from api import api
 from db.postgres import db
 from db.redis import jwt_redis_blocklist
 from models.role import Role
-from models.user import User
+from models.user import (User,
+                         SocialAccount)
 from models.user_login_history import UserLoginHistory
 from models.user_role import user_role
 
