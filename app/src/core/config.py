@@ -22,7 +22,7 @@ class Settings(object):
     RESTX_MASK_SWAGGER = False
     PAGE_LIMIT_HISTORY = 10
     SECRET_KEY = 'zima-holoda'
-    OAUTH_REDIRECT_URL = 'http://localhost'
+    OAUTH_REDIRECT_URL = 'http://localhost/api/v1/identity/authorization'
 
     # yandex oauth
     YANDEX_OAUTH_CLIENT_ID = os.getenv("YANDEX_OAUTH_CLIENT_ID")

@@ -5,7 +5,7 @@ from schemas.token import responses_tokens
 from schemas.user import (user_schema_login, user_schema_register,
                           user_schema_response)
 from services.auth import auth_service
-from services.oauth import get_yandex
+from services.oauth import get_oauth_service
 
 api = Namespace(
     "API для сайта и личного кабинета. Анонимные пользователи", validate=True
@@ -18,6 +18,7 @@ responses_tokens = api.model("ResponsesTokens", responses_tokens)
 
 parser = reqparse.RequestParser()
 parser.add_argument("User-Agent", location="headers")
+parser.add_argument("provider", location="args")
 
 
 @api.route("/register")
@@ -47,6 +48,17 @@ class Login(Resource):
 @api.route("/identity/login/<provider>")
 class IdentityLogin(Resource):
     def get(self, provider):
-        print(provider)
-        asd = get_yandex()
-        return asd.redirect_to_provider()
+        oauth_client = get_oauth_service(provider)
+        return oauth_client.redirect_to_provider(provider)
+
+
+@api.route("/identity/authorization")
+class IdentityAuthorization(Resource):
+    @api.marshal_with(responses_tokens, code=int(HTTPStatus.OK))
+    def get(self):
+        provider = parser.parse_args()["provider"]
+        user_agent = parser.parse_args()["User-Agent"]
+        oauth_client = get_oauth_service(provider)
+        tokens = oauth_client.authorization_user(user_agent)
+        return tokens
+
