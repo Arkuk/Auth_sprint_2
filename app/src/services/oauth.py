@@ -4,10 +4,7 @@ from secrets import choice as secrets_choice
 from abc import abstractmethod
 
 from authlib.integrations.flask_client import OAuth
-from flask import url_for
 from sqlalchemy.exc import NoResultFound
-from flask_restx import abort
-from flask_restx._http import HTTPStatus
 
 from db.postgres import db
 from core.config import settings
@@ -52,8 +49,8 @@ class OauthService:
     def redirect_to_provider(self, provider):
         return self.client.authorize_redirect(f'{self.redirect_url}?provider={provider}')
 
-    def get_tokens_auth(self):
-        return self.client.authorize_access_token()
+    def get_tokens_auth(self, **kwargs):
+        return self.client.authorize_access_token(**kwargs)
 
     def get_user_info(self):
         return self.client.userinfo()
@@ -73,12 +70,13 @@ class OauthService:
         pass
 
     @staticmethod
-    def generate_random_string():
+    def generate_random_string(len: int):
         alphabet = string.ascii_letters + string.digits
-        return ''.join(secrets_choice(alphabet) for _ in range(10))
+        return ''.join(secrets_choice(alphabet) for _ in range(len))
 
     def create_user_body(self, username):
-        password = self.generate_random_string()
+        username = username + self.generate_random_string(5)
+        password = self.generate_random_string(10)
         return {
             'username': username,
             'password1': password,
@@ -112,6 +110,14 @@ class YandexOauthService(OauthService):
             return tokens
 
 
+class VkOauthService(OauthService):
+    def authorization_user(self, user_agent):
+        token = self.get_tokens_auth(client_id=self.client_id,
+                                     client_secret=self.client_secret)
+
+        print(token)
+
+
 @lru_cache()
 def get_oauth_service(provider):
     match provider:
@@ -124,4 +130,14 @@ def get_oauth_service(provider):
                 authorize_url=settings.YANDEX_OAUTH_AUTHORIZE_URL,
                 userinfo_endpoint=settings.YANDEX_OAUTH_USERINFO_ENDPOINT,
                 client_kwargs=settings.YANDEX_OAUTH_CLIENT_KWARGS
+            )
+        case 'vk':
+            return VkOauthService(
+                name='vk',
+                client_id=settings.VK_OAUTH_CLIENT_ID,
+                client_secret=settings.VK_OAUTH_CLIENT_SECRET,
+                access_token_url=settings.VK_OAUTH_ACCESS_TOKEN_URL,
+                authorize_url=settings.VK_OAUTH_AUTHORIZE_URL,
+                userinfo_endpoint=settings.VK_OAUTH_USERINFO_ENDPOINT,
+                client_kwargs=settings.VK_OAUTH_CLIENT_KWARGS
             )

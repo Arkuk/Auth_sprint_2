@@ -33,4 +33,12 @@ class Settings(object):
     YANDEX_OAUTH_CLIENT_KWARGS = {'scope': 'login:info login:email'}
 
 
+    # vk oauth
+    VK_OAUTH_CLIENT_ID = os.getenv("VK_OAUTH_CLIENT_ID")
+    VK_OAUTH_CLIENT_SECRET = os.getenv("VK_OAUTH_CLIENT_SECRET")
+    VK_OAUTH_ACCESS_TOKEN_URL = 'https://oauth.vk.com/access_token'
+    VK_OAUTH_AUTHORIZE_URL = 'https://oauth.vk.com/authorize'
+    VK_OAUTH_USERINFO_ENDPOINT = 'https://api.vk.com/method/'
+    VK_OAUTH_CLIENT_KWARGS = {'scope': 'email'}
+
 settings = Settings()
