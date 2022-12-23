@@ -59,6 +59,6 @@ class IdentityAuthorization(Resource):
         provider = parser.parse_args()["provider"]
         user_agent = parser.parse_args()["User-Agent"]
         oauth_client = get_oauth_service(provider)
-        tokens = oauth_client.authorization_user(user_agent)
+        username, social_id = oauth_client.get_data_from_provider()
+        tokens = oauth_client.authorization_user(user_agent, username, social_id)
         return tokens
-

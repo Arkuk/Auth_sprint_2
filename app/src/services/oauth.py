@@ -58,15 +58,15 @@ class OauthService:
     def check_social_acc(self, social_id):
         try:
             user = db.session.execute(
-                db.select(SocialAccount).filter_by(social_id=social_id,
-                                                   social_name=self.name)
+                db.select(SocialAccount).filter_by(social_id=str(social_id),
+                                                   social_name=str(self.name))
             ).one()
             return user[0]
         except NoResultFound:
             return False
 
     @abstractmethod
-    def authorization_user(self, user_agent):
+    def get_data_from_provider(self):
         pass
 
     @staticmethod
@@ -83,13 +83,7 @@ class OauthService:
             'password2': password
         }
 
-
-class YandexOauthService(OauthService):
-    def authorization_user(self, user_agent):
-        self.get_tokens_auth()
-        user = self.get_user_info()
-        username = user['login']
-        social_id = user['id']
+    def authorization_user(self, user_agent, username, social_id):
         social_acc = self.check_social_acc(social_id)
         if not social_acc:
             user_body = self.create_user_body(username)
@@ -110,12 +104,22 @@ class YandexOauthService(OauthService):
             return tokens
 
 
-class VkOauthService(OauthService):
-    def authorization_user(self, user_agent):
-        token = self.get_tokens_auth(client_id=self.client_id,
-                                     client_secret=self.client_secret)
+class YandexOauthService(OauthService):
+    def get_data_from_provider(self):
+        self.get_tokens_auth()
+        user = self.get_user_info()
+        username = user['login']
+        social_id = user['id']
+        return username, social_id
 
-        print(token)
+
+class VkOauthService(OauthService):
+    def get_data_from_provider(self):
+        data = self.get_tokens_auth(client_id=self.client_id,
+                                    client_secret=self.client_secret)
+        username = data['email']
+        social_id = data['user_id']
+        return username, social_id
 
 
 @lru_cache()
