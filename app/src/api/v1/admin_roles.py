@@ -23,6 +23,7 @@ class RoleCRUD(Resource):
         int(HTTPStatus.CONFLICT),
         "Role is already exist! Please choose another role name",
     )
+    @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def post(self):
         result = role_service.create_role(api.payload)
         return result, 201
@@ -30,6 +31,7 @@ class RoleCRUD(Resource):
     @auth_service.verify_token()
     @auth_service.check_roles(["admin"])
     @api.marshal_with(role_schema_response, code=int(HTTPStatus.OK))
+    @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def get(self):
         result = role_service.get_roles_list()
         return result, 200
@@ -39,6 +41,7 @@ class RoleCRUD(Resource):
     @api.expect(role_schema_response)
     @api.marshal_with(role_schema_response, code=int(HTTPStatus.OK))
     @api.response(int(HTTPStatus.CONFLICT), "No role to update")
+    @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def put(self):
         result = role_service.update_role(api.payload)
         return result, 200
@@ -47,6 +50,7 @@ class RoleCRUD(Resource):
     @auth_service.check_roles(["admin"])
     @api.expect(role_schema_expect)
     @api.marshal_with(role_schema_expect, code=int(HTTPStatus.OK))
+    @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     @api.response(
         int(HTTPStatus.CONFLICT), "Cannot delete the role, role assigned to user"
     )

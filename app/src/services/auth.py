@@ -196,6 +196,15 @@ class AuthService:
         return wrapper
 
     @staticmethod
+    def func_check_roles(name_roles):
+        name_roles_jwt = get_jwt()["roles"]
+        # Пересечение ролей для ручки и ролей в токене
+        if list(set(name_roles) & set(name_roles_jwt)):
+            return True
+        else:
+            abort(HTTPStatus.FORBIDDEN, "Permission denied")
+
+    @staticmethod
     def check_roles(name_roles: list[str]):
         """Декоратор для проверки роли"""
 
