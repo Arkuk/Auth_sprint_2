@@ -47,6 +47,7 @@ class Login(Resource):
 
 @api.route("/identity/login/<provider>")
 class IdentityLogin(Resource):
+    @api.response(int(HTTPStatus.TEMPORARY_REDIRECT), "Temporary Redirect")
     def get(self, provider):
         oauth_client = get_oauth_service(provider)
         return oauth_client.redirect_to_provider(provider)
