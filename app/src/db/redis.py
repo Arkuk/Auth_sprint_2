@@ -12,5 +12,5 @@ jwt_redis_blocklist = redis.Redis(
     host=redis_host, port=int(redis_port), db=1, decode_responses=True
 )
 
-limiter = Limiter(key_func=get_remote_address, default_limits=["200 per day", "10 per hour"],
+limiter = Limiter(key_func=get_remote_address, default_limits=["200000 per day", "10000 per hour"],
                   storage_uri=f"redis://{redis_host}:{int(redis_port)}", strategy="fixed-window")
