@@ -13,6 +13,7 @@ from jwt.exceptions import (DecodeError, ExpiredSignatureError,
                             InvalidSignatureError)
 from passlib.hash import argon2
 from sqlalchemy.exc import NoResultFound
+from werkzeug.user_agent import UserAgent
 
 from core.config import settings
 from db.postgres import db
@@ -81,6 +82,12 @@ class AuthService:
     def validate_password(password: str, hash_password: str) -> bool:
         return argon2.verify(password, hash_password)
 
+    @staticmethod
+    def check_user_agent(platform):
+        if not platform:
+            platform = 'unknown'
+        return platform
+
     def create_user(self, body: dict):
         body_user_create = BodyUserCreate(**body)
         if self.is_passwords_equal(body_user_create.password1, body_user_create.password2):
@@ -117,18 +124,21 @@ class AuthService:
 
     @staticmethod
     def create_record_history(user_id, user_agent):
-        new_history_record = UserLoginHistory(user_id=user_id, user_agent=user_agent)
+        user_agent = UserAgent(user_agent)
+        new_history_record = UserLoginHistory(user_id=user_id, user_agent=user_agent.platform)
         db.session.add(new_history_record)
         db.session.commit()
         return True
 
     def login_user(self, body: dict, user_agent: str):
         body_user_login = BodyUserLogin(**body)
+        user_agent = UserAgent(user_agent)
         user_in_base = self.check_for_useername_in_base(body_user_login.username)
         if user_in_base:
             hash_password = user_in_base.password
             if self.validate_password(body_user_login.password, hash_password):
-                self.create_record_history(user_in_base.id, user_agent)
+                user_agent.platform = self.check_user_agent(user_agent.platform)
+                self.create_record_history(user_in_base.id, user_agent.platform)
                 tokens = self.create_tokens(str(user_in_base.id))
                 return tokens
             else:

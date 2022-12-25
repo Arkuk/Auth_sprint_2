@@ -1,10 +1,12 @@
 from flask_restx import Namespace, Resource
 from flask_restx._http import HTTPStatus
 
+
 from schemas.role import (role_schema_create, role_schema_expect,
                           role_schema_response)
 from services.auth import auth_service
 from services.roles import role_service
+
 
 api = Namespace("API для сайта и личного кабинета. Управление ролями", validate=True)
 

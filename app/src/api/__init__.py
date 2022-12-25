@@ -6,6 +6,7 @@ from api.v1.admin_users import api as api_admin_users
 from api.v1.authorized import api as api_authorized
 from api.v1.not_authorized import api as api_not_authorized
 
+
 api = Api(
     version="1.0",
     title="Auth",
