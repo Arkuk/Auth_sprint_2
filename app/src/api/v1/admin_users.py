@@ -16,6 +16,7 @@ class User(Resource):
     @auth_service.check_roles(["admin"])
     @api.marshal_with(users, code=HTTPStatus.OK)
     @api.response(int(HTTPStatus.NOT_FOUND), "Not Found")
+    @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def get(self):
         result = admin_service.get_list_data()
         return result, 200

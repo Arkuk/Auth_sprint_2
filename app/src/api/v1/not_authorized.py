@@ -47,6 +47,7 @@ class Login(Resource):
 
 @api.route("/identity/login/<provider>")
 class IdentityLogin(Resource):
+    @api.response(int(HTTPStatus.TEMPORARY_REDIRECT), "Temporary Redirect")
     def get(self, provider):
         oauth_client = get_oauth_service(provider)
         return oauth_client.redirect_to_provider(provider)
@@ -59,6 +60,6 @@ class IdentityAuthorization(Resource):
         provider = parser.parse_args()["provider"]
         user_agent = parser.parse_args()["User-Agent"]
         oauth_client = get_oauth_service(provider)
-        tokens = oauth_client.authorization_user(user_agent)
+        username, social_id = oauth_client.get_data_from_provider()
+        tokens = oauth_client.authorization_user(user_agent, username, social_id)
         return tokens
-

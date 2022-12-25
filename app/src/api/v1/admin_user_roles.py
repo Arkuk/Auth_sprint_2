@@ -15,6 +15,7 @@ class Roles(Resource):
     @auth_service.verify_token()
     @auth_service.check_roles(["admin"])
     @api.marshal_with(user_roles_schema, code=int(HTTPStatus.OK))
+    @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def get(self, user_id):
         roles = user_roles.get_user_roles(user_id)
         return roles, 200
@@ -24,6 +25,7 @@ class Roles(Resource):
     @api.expect(user_roles_schema)
     @api.response(int(HTTPStatus.CREATED), "Role assigned to user")
     @api.response(int(HTTPStatus.CONFLICT), "User already has this role")
+    @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def post(self, user_id):
         roles = user_roles.assign_role(user_id, api.payload)
         return roles, 201
@@ -33,6 +35,7 @@ class Roles(Resource):
     @api.expect(user_roles_schema)
     @api.response(int(HTTPStatus.OK), "Role discarded from user")
     @api.response(int(HTTPStatus.CONFLICT), "No role to discard from user")
+    @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def delete(self, user_id):
         roles = user_roles.discard_role(user_id, api.payload)
         return roles, 204
