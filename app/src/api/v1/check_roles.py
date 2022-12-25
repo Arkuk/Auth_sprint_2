@@ -1,18 +1,21 @@
 from flask_restx import Namespace, Resource, reqparse
 from flask_restx._http import HTTPStatus
+
 from services.auth import auth_service
+from schemas.token import token_valid
 
 api = Namespace("Ручка для интеграции сервисов")
 
-parser = reqparse.RequestParser()
+token_valid = api.model("TokenValid", token_valid)
 
+parser = reqparse.RequestParser()
 parser.add_argument("role", location="args")
 
 
 @api.route("/check_roles/<role>")
 class CheckRoles(Resource):
     @auth_service.verify_token()
-    @api.marshal_with('Token valid', code=HTTPStatus.OK)
+    @api.marshal_with(token_valid, code=HTTPStatus.OK)
     @api.response(int(HTTPStatus.NO_CONTENT), "Request fulfilled, nothing follows")
     @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     @api.response(int(HTTPStatus.UNAUTHORIZED), "Token is not corrected\n"

@@ -41,4 +41,8 @@ class Settings(object):
     VK_OAUTH_USERINFO_ENDPOINT = 'https://api.vk.com/method/'
     VK_OAUTH_CLIENT_KWARGS = {'scope': 'email'}
 
+    #rate limit
+    LIMITS_PER_DAY = 1000
+    LIMITS_PER_HOUR = 50
+
 settings = Settings()

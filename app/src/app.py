@@ -51,8 +51,8 @@ def create_app(config=None):
     # инициализация rate limit
     limiter.init_app(app)
     #tracer
-    configure_tracer()
-    FlaskInstrumentor().instrument_app(app)
+    #configure_tracer()
+    #FlaskInstrumentor().instrument_app(app)
 
 
 
