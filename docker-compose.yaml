@@ -9,8 +9,6 @@ services:
       - ${AUTH_API_PORT}
     env_file:
       - .env
-    ports:
-      - "8000:8000"
 
   auth_nginx:
     image: nginx:latest
