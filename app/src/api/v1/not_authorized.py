@@ -1,7 +1,6 @@
 from flask_restx import Namespace, Resource, reqparse
 from flask_restx._http import HTTPStatus
 
-from db.redis import limiter
 from schemas.token import responses_tokens
 from schemas.user import (user_schema_login, user_schema_register,
                           user_schema_response)
@@ -25,6 +24,7 @@ parser.add_argument("provider", location="args")
 
 @api.route("/register")
 class Register(Resource):
+
     @api.expect(user_schema_register)
     @api.marshal_with(user_schema_response, code=int(HTTPStatus.CREATED))
     @api.response(

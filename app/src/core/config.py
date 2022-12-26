@@ -14,7 +14,6 @@ class Settings(object):
         f'{os.getenv("AUTH_POSTGRES_HOST")}:{os.getenv("AUTH_POSTGRES_PORT")}/'
         f'{os.getenv("AUTH_POSTGRES_NAME")}'
     )
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_TOKEN_LOCATION = "headers"
     JWT_SECRET_KEY = "super-secret"  # Change this!
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
