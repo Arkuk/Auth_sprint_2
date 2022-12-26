@@ -37,6 +37,8 @@ services:
       - POSTGRES_DB=${AUTH_POSTGRES_NAME}
     volumes:
       - auth_pg_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
 
 
   auth_redis:
@@ -47,6 +49,18 @@ services:
       - auth_redis
     volumes:
       - auth_redis_data:/var/lib/redis/data
+    ports:
+      - "6379:6379"
+
+  jaeger:
+    image: jaegertracing/all-in-one
+    networks:
+      - jaeger
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+    depends_on:
+      - auth_nginx
 
 
 volumes:
@@ -61,4 +75,6 @@ networks:
   nginx:
     name: movies_net
   auth_api:
+    name: movies_net
+  jaeger:
     name: movies_net

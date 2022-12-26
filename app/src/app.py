@@ -1,20 +1,26 @@
 import click
-from flask import Flask
+from flask import Flask, request
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from passlib.hash import argon2
 
+from services.oauth import oauth
 from api import api
+from core.jaeger import init_jaeger
 from db.postgres import db
+from db.redis import limiter
 from db.redis import jwt_redis_blocklist
 from models.role import Role
-from models.user import User
+from models.user import (User,
+                         SocialAccount)
 from models.user_login_history import UserLoginHistory
 from models.user_role import user_role
 
 
 def create_app(config=None):
     app = Flask(__name__)
+    # инициализация oauth
+    oauth.init_app(app)
     # загрузка настроек для Flask
     app.config.from_object("core.config.Settings")
     # батарейка для миграций
@@ -25,6 +31,16 @@ def create_app(config=None):
     api.init_app(app)
     # инициализация jwt
     jwt = JWTManager(app)
+    # ratelimit
+    limiter.init_app(app)
+    # tracer
+    init_jaeger(app)
+
+    @app.before_request
+    def before_request():
+        request_id = request.headers.get('X-Request-Id')
+        if not request_id:
+            raise RuntimeError('request id is required')
 
     @app.cli.command("create-roles")
     def create_roles():
