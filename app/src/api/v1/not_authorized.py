@@ -21,7 +21,6 @@ parser.add_argument("User-Agent", location="headers")
 parser.add_argument("provider", location="args")
 
 
-
 @api.route("/register")
 class Register(Resource):
 
@@ -34,7 +33,6 @@ class Register(Resource):
     def post(self):
         result = auth_service.create_user(api.payload)
         return result, 201
-
 
 
 @api.route("/login")
@@ -65,5 +63,6 @@ class IdentityAuthorization(Resource):
         user_agent = parser.parse_args()["User-Agent"]
         oauth_client = get_oauth_service(provider)
         username, social_id = oauth_client.get_data_from_provider()
-        tokens = oauth_client.authorization_user(user_agent, username, social_id)
+        tokens = oauth_client.authorization_user(
+            user_agent, username, social_id)
         return tokens

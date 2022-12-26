@@ -58,7 +58,9 @@ class AuthService:
     @staticmethod
     def check_for_id_in_base(user_id: str) -> User | bool:
         try:
-            user = db.session.execute(db.select(User).filter_by(id=user_id)).one()
+            user = db.session.execute(
+                db.select(User).filter_by(
+                    id=user_id)).one()
             return user[0]
         except NoResultFound:
             return False
@@ -83,10 +85,12 @@ class AuthService:
 
     def create_user(self, body: dict):
         body_user_create = BodyUserCreate(**body)
-        if self.is_passwords_equal(body_user_create.password1, body_user_create.password2):
+        if self.is_passwords_equal(
+                body_user_create.password1, body_user_create.password2):
             if not self.check_for_useername_in_base(body_user_create.username):
                 new_user = User(
-                    username=body_user_create.username, password=self.hash_password(body_user_create.password1)
+                    username=body_user_create.username, password=self.hash_password(
+                        body_user_create.password1)
                 )
                 db.session.add(new_user)
                 db.session.commit()
@@ -94,7 +98,9 @@ class AuthService:
                 return new_user
 
             else:
-                abort(HTTPStatus.CONFLICT, f"Username {body_user_create.username} already exists")
+                abort(
+                    HTTPStatus.CONFLICT,
+                    f"Username {body_user_create.username} already exists")
         else:
             abort(HTTPStatus.CONFLICT, "Passwords dont match")
 
@@ -103,9 +109,12 @@ class AuthService:
         user_in_base = self.check_for_id_in_base(user_id)
         if user_in_base:
             hash_password = user_in_base.password
-            if self.validate_password(body_user_edit.old_password, hash_password):
-                if self.is_passwords_equal(body_user_edit.new_password1, body_user_edit.new_password2):
-                    user_in_base.password = self.hash_password(body_user_edit.new_password2)
+            if self.validate_password(
+                    body_user_edit.old_password, hash_password):
+                if self.is_passwords_equal(
+                        body_user_edit.new_password1, body_user_edit.new_password2):
+                    user_in_base.password = self.hash_password(
+                        body_user_edit.new_password2)
                     db.session.add(user_in_base)
                     db.session.commit()
                 else:
@@ -117,14 +126,16 @@ class AuthService:
 
     @staticmethod
     def create_record_history(user_id, user_agent):
-        new_history_record = UserLoginHistory(user_id=user_id, user_agent=user_agent)
+        new_history_record = UserLoginHistory(
+            user_id=user_id, user_agent=user_agent)
         db.session.add(new_history_record)
         db.session.commit()
         return True
 
     def login_user(self, body: dict, user_agent: str):
         body_user_login = BodyUserLogin(**body)
-        user_in_base = self.check_for_useername_in_base(body_user_login.username)
+        user_in_base = self.check_for_useername_in_base(
+            body_user_login.username)
         if user_in_base:
             hash_password = user_in_base.password
             if self.validate_password(body_user_login.password, hash_password):
@@ -152,7 +163,8 @@ class AuthService:
             self.add_token_to_blacklist(jti, settings.JWT_ACCESS_TOKEN_EXPIRES)
             return {"status": "Access token is exist"}, HTTPStatus.NO_CONTENT
         if ttype == "refresh":
-            self.add_token_to_blacklist(jti, settings.JWT_REFRESH_TOKEN_EXPIRES)
+            self.add_token_to_blacklist(
+                jti, settings.JWT_REFRESH_TOKEN_EXPIRES)
             return {"status": "Refresh token is exist"}, HTTPStatus.NO_CONTENT
 
     @staticmethod
@@ -182,11 +194,17 @@ class AuthService:
                 except NoAuthorizationError:
                     abort(HTTPStatus.UNAUTHORIZED, "No token")
                 except DecodeError:
-                    abort(HTTPStatus.UNPROCESSABLE_ENTITY, "Token is not corrected")
+                    abort(
+                        HTTPStatus.UNPROCESSABLE_ENTITY,
+                        "Token is not corrected")
                 except InvalidSignatureError:
-                    abort(HTTPStatus.UNPROCESSABLE_ENTITY, "Token is not corrected")
+                    abort(
+                        HTTPStatus.UNPROCESSABLE_ENTITY,
+                        "Token is not corrected")
                 except ExpiredSignatureError:
-                    abort(HTTPStatus.UNPROCESSABLE_ENTITY, "The token has expired")
+                    abort(
+                        HTTPStatus.UNPROCESSABLE_ENTITY,
+                        "The token has expired")
                 except Exception as e:
                     logging.warning(str(e))
                 return fn(*args, **kwargs)

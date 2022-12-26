@@ -6,7 +6,9 @@ from schemas.role import (role_schema_create, role_schema_expect,
 from services.auth import auth_service
 from services.roles import role_service
 
-api = Namespace("API для сайта и личного кабинета. Управление ролями", validate=True)
+api = Namespace(
+    "API для сайта и личного кабинета. Управление ролями",
+    validate=True)
 
 role_schema_expect = api.model("RoleExpect", role_schema_expect)
 role_schema_create = api.model("RoleCreated", role_schema_create)

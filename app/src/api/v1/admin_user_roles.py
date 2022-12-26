@@ -5,7 +5,8 @@ from schemas.user_roles import user_roles_schema
 from services.auth import auth_service
 from services.user_roles import user_roles
 
-api = Namespace("API для управления доступами. Управляение ролями пользователей")
+api = Namespace(
+    "API для управления доступами. Управляение ролями пользователей")
 
 user_roles_schema = api.model("UserRoleResponse", user_roles_schema)
 

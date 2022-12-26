@@ -47,7 +47,8 @@ class OauthService:
         return oauth.create_client(self.name)
 
     def redirect_to_provider(self, provider):
-        return self.client.authorize_redirect(f'{self.redirect_url}?provider={provider}')
+        return self.client.authorize_redirect(
+            f'{self.redirect_url}?provider={provider}')
 
     def get_tokens_auth(self, **kwargs):
         return self.client.authorize_access_token(**kwargs)

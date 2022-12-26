@@ -14,7 +14,8 @@ parser.add_argument("role", location="args")
 @api.route("/check_roles/<role>")
 class CheckRoles(Resource):
     @auth_service.verify_token()
-    @api.response(int(HTTPStatus.NO_CONTENT), "Request fulfilled, nothing follows")
+    @api.response(int(HTTPStatus.NO_CONTENT),
+                  "Request fulfilled, nothing follows")
     @api.response(int(HTTPStatus.OK), "Token is valid")
     @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     @api.response(int(HTTPStatus.UNAUTHORIZED), "Token is not corrected\n"

@@ -20,7 +20,7 @@ class Settings(object):
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     RESTX_MASK_SWAGGER = False
     PAGE_LIMIT_HISTORY = 10
-    SECRET_KEY = 'zima-holoda' # Change this!
+    SECRET_KEY = 'zima-holoda'  # Change this!
     OAUTH_REDIRECT_URL = 'http://localhost/api/v1/identity/authorization'
 
     # yandex oauth
@@ -30,7 +30,6 @@ class Settings(object):
     YANDEX_OAUTH_AUTHORIZE_URL = 'https://oauth.yandex.ru/authorize'
     YANDEX_OAUTH_USERINFO_ENDPOINT = 'https://login.yandex.ru/info'
     YANDEX_OAUTH_CLIENT_KWARGS = {'scope': 'login:info login:email'}
-
 
     # vk oauth
     VK_OAUTH_CLIENT_ID = os.getenv("VK_OAUTH_CLIENT_ID")
@@ -42,5 +41,6 @@ class Settings(object):
 
     JAEGER_HOST = 'jaeger'
     JAEGER_PORT = 6831
+
 
 settings = Settings()

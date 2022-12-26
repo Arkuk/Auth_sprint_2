@@ -14,7 +14,8 @@ class User(IdMixin, CreatedTimeMixin, UpdatedTimeMixin):
     username = db.Column(db.String(length=56), unique=True, nullable=False)
     password = db.Column(db.String(length=256), nullable=False)
     roles = db.relationship(Role, secondary=user_role, backref="users")
-    social_account = db.relationship('SocialAccount', backref='user', lazy=True)
+    social_account = db.relationship(
+        'SocialAccount', backref='user', lazy=True)
 
 
 def create_partition(target, connection, **kw) -> None:
@@ -33,9 +34,18 @@ class SocialAccount(CreatedTimeMixin):
                       {
                           'postgresql_partition_by': 'LIST (social_name)',
                           'listeners': [('after_create', create_partition)],
-                      })
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False)
+    })
+    id = db.Column(
+        UUID(
+            as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        nullable=False)
+    user_id = db.Column(
+        UUID(
+            as_uuid=True),
+        db.ForeignKey('user.id'),
+        nullable=False)
     created = db.Column(db.DateTime, default=db.func.now())
     social_id = db.Column(db.Text, nullable=False)
     social_name = db.Column(db.Text, primary_key=True)
