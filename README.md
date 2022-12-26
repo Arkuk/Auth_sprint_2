@@ -1,20 +1,39 @@
-# Проектная работа 7 спринта
+# Auth_sprint_2
+**[Ссылка на репозиторий](https://github.com/Arkuk/Auth_sprint_2)**
+## Как запустить проект
+**1) Склонировать проект**
+```commandline
+git clone https://github.com/Arkuk/Auth_sprint_1.git
+```
+**2) Перейти в папку Auth_sprint_2**
+```commandline
+cd ./Auth_sprint_2
+```
+**3) Скопировать env**
+```commandline
+cp .env.example .env
+```
+**4)  Запустить Docker**
+```docker
+docker-compose down
+docker compose up -d
+```
+**После запуска вам будет доступна документация**
 
-Упростите регистрацию и аутентификацию пользователей в Auth-сервисе, добавив вход через социальные сервисы. Список сервисов выбирайте исходя из целевой аудитории онлайн-кинотеатра — подумайте, какими социальными сервисами они пользуются. Например, использовать [OAuth от Github](https://docs.github.com/en/free-pro-team@latest/developers/apps/authorizing-oauth-apps){target="_blank"} — не самая удачная идея. Ваши пользователи не разработчики и вряд ли имеют аккаунт на Github. А вот добавить Twitter, Facebook, VK, Google, Yandex или Mail будет хорошей идеей.
+**[Ссылка на документацию](http://localhost/api/v1/swagger)**
 
-Вам не нужно делать фронтенд в этой задаче и реализовывать собственный сервер OAuth. Нужно реализовать протокол со стороны потребителя.
 
-Информация по OAuth у разных поставщиков данных: 
-
-- [Twitter](https://developer.twitter.com/en/docs/authentication/overview){target="_blank"},
-- [Facebook](https://developers.facebook.com/docs/facebook-login/){target="_blank"},
-- [VK](https://vk.com/dev/access_token){target="_blank"},
-- [Google](https://developers.google.com/identity/protocols/oauth2){target="_blank"},
-- [Yandex](https://yandex.ru/dev/oauth/?turbo=true){target="_blank"},
-- [Mail](https://api.mail.ru/docs/guides/oauth/){target="_blank"}.
-
-## Дополнительное задание
-
-Реализуйте возможность открепить аккаунт в соцсети от личного кабинета. 
-
-Решение залейте в репозиторий текущего спринта и отправьте на ревью.
+## Как запустить тесты
+**1) Склонировать проект(если не склонирован)**
+```commandline
+git clone https://github.com/Arkuk/Auth_sprint_2.git
+```
+**2) Перейти в папку Auth_sprint_2/app/tests/functional/**
+```commandline
+cd ./Auth_sprint_2/app/tests/functional
+```
+**3)  Запустить Docker**
+```docker
+docker-compose down
+docker-compose up --build -d
+```
