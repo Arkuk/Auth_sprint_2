@@ -5,6 +5,7 @@ from api.v1.admin_user_roles import api as api_admin_user_roles
 from api.v1.admin_users import api as api_admin_users
 from api.v1.authorized import api as api_authorized
 from api.v1.not_authorized import api as api_not_authorized
+from api.v1.check_roles import api as api_check_roles
 
 api = Api(
     version="1.0",
@@ -18,3 +19,4 @@ api.add_namespace(api_authorized, path="/api/v1")
 api.add_namespace(api_admin_users, path="/api/v1")
 api.add_namespace(api_admin_user_roles, path="/api/v1")
 api.add_namespace(api_admin_roles, path="/api/v1")
+api.add_namespace(api_check_roles, path="/api/v1")

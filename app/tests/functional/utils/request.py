@@ -12,6 +12,7 @@ class HTTPResponse:
     headers: CIMultiDictProxy[str]
     status: int
 
+
 async def make_request(
         client_session,
         http_method: str,
