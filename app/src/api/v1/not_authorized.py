@@ -36,8 +36,10 @@ class Register(Resource):
         return result, 201
 
 
+
 @api.route("/login")
 class Login(Resource):
+
     @api.expect(user_schema_login)
     @api.marshal_with(responses_tokens, code=int(HTTPStatus.OK))
     @api.response(int(HTTPStatus.UNAUTHORIZED), "Wrong login or password")

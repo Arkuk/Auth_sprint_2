@@ -40,4 +40,7 @@ class Settings(object):
     VK_OAUTH_USERINFO_ENDPOINT = 'https://api.vk.com/method/'
     VK_OAUTH_CLIENT_KWARGS = {'scope': 'email'}
 
+    JAEGER_HOST = 'jaeger'
+    JAEGER_PORT = 6831
+
 settings = Settings()

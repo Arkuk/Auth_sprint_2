@@ -1,8 +1,9 @@
 import click
-from flask import Flask
+from flask import Flask, request
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from passlib.hash import argon2
+
 
 from services.oauth import oauth
 from api import api
@@ -14,6 +15,12 @@ from models.user import (User,
                          SocialAccount)
 from models.user_login_history import UserLoginHistory
 from models.user_role import user_role
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 
 
 def create_app(config=None):
@@ -33,6 +40,30 @@ def create_app(config=None):
     # ratelimit
     limiter.init_app(app)
 
+    def configure_tracer() -> None:
+        trace.set_tracer_provider(
+            TracerProvider(resource=Resource.create({SERVICE_NAME: "Auth-service"}))
+        )
+        trace.get_tracer_provider().add_span_processor(
+            BatchSpanProcessor(
+                JaegerExporter(
+                    agent_host_name='jaeger',
+                    agent_port=6831,
+                )
+            )
+        )
+        # Чтобы видеть трейсы в консоли
+        trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
+
+    configure_tracer()
+
+    FlaskInstrumentor().instrument_app(app)
+
+    @app.before_request
+    def before_request():
+        request_id = request.headers.get('X-Request-Id')
+        if not request_id:
+            raise RuntimeError('request id is required')
 
     @app.cli.command("create-roles")
     def create_roles():

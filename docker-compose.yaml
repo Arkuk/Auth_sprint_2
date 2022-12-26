@@ -52,6 +52,16 @@ services:
     ports:
       - "6379:6379"
 
+  jaeger:
+    image: jaegertracing/all-in-one
+    networks:
+      - jaeger
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+    depends_on:
+      - auth_nginx
+
 
 volumes:
   auth_pg_data:
@@ -65,4 +75,6 @@ networks:
   nginx:
     name: movies_net
   auth_api:
+    name: movies_net
+  jaeger:
     name: movies_net
