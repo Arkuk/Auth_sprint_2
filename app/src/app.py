@@ -7,6 +7,7 @@ from passlib.hash import argon2
 from services.oauth import oauth
 from api import api
 from db.postgres import db
+from db.redis import limiter
 from db.redis import jwt_redis_blocklist
 from models.role import Role
 from models.user import (User,
@@ -29,7 +30,8 @@ def create_app(config=None):
     api.init_app(app)
     # инициализация jwt
     jwt = JWTManager(app)
-
+    # ratelimit
+    limiter.init_app(app)
 
 
     @app.cli.command("create-roles")

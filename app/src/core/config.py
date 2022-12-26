@@ -21,7 +21,7 @@ class Settings(object):
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     RESTX_MASK_SWAGGER = False
     PAGE_LIMIT_HISTORY = 10
-    SECRET_KEY = 'zima-holoda'
+    SECRET_KEY = 'zima-holoda' # Change this!
     OAUTH_REDIRECT_URL = 'http://localhost/api/v1/identity/authorization'
 
     # yandex oauth
