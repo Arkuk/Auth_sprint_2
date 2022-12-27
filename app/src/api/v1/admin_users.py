@@ -19,4 +19,4 @@ class User(Resource):
     @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def get(self):
         result = admin_service.get_list_data()
-        return result, 200
+        return result, int(HTTPStatus.OK)

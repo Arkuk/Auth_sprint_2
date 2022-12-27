@@ -28,7 +28,7 @@ class RoleCRUD(Resource):
     @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def post(self):
         result = role_service.create_role(api.payload)
-        return result, 201
+        return result, int(HTTPStatus.CREATED)
 
     @auth_service.verify_token()
     @auth_service.check_roles(["admin"])
@@ -36,7 +36,7 @@ class RoleCRUD(Resource):
     @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def get(self):
         result = role_service.get_roles_list()
-        return result, 200
+        return result, int(HTTPStatus.OK)
 
     @auth_service.verify_token()
     @auth_service.check_roles(["admin"])
@@ -46,7 +46,7 @@ class RoleCRUD(Resource):
     @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def put(self):
         result = role_service.update_role(api.payload)
-        return result, 200
+        return result, int(HTTPStatus.OK)
 
     @auth_service.verify_token()
     @auth_service.check_roles(["admin"])
@@ -58,4 +58,4 @@ class RoleCRUD(Resource):
     )
     def delete(self):
         result = role_service.delete_role(api.payload)
-        return result, 204
+        return result, int(HTTPStatus.NO_CONTENT)

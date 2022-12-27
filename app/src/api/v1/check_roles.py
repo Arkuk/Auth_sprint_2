@@ -24,6 +24,6 @@ class CheckRoles(Resource):
                                                         "The token has expired")
     def post(self, role):
         if auth_service.func_check_roles([role]):
-            return 200
+            return int(HTTPStatus.OK)
         else:
             return int(HTTPStatus.NO_CONTENT)

@@ -43,7 +43,7 @@ class Refresh(Resource):
     def post(self):
         jwt = get_jwt()
         result = auth_service.refresh_token(jwt)
-        return result, 200
+        return result, int(HTTPStatus.OK)
 
 
 @api.route("/me")
@@ -58,7 +58,7 @@ class Me(Resource):
         jwt = get_jwt()
         user_id = jwt["sub"]
         result = user_service.get_detail_user(user_id)
-        return result, 200
+        return result, int(HTTPStatus.OK)
 
 
 @api.route("/change_password")
@@ -77,7 +77,7 @@ class ChangePassword(Resource):
         jwt = get_jwt()
         user_id = jwt["sub"]
         auth_service.change_password(api.payload, user_id)
-        return {"message": "Password changed"}, 200
+        return {"message": "Password changed"}, int(HTTPStatus.OK)
 
 
 @api.route("/login_history")
@@ -94,7 +94,7 @@ class LoginHistory(Resource):
         user_id = jwt["sub"]
         body = parser.parse_args()
         result = user_service.get_login_history(user_id, body)
-        return result, 200
+        return result, int(HTTPStatus.OK)
 
 
 # https://flask-jwt-extended.readthedocs.io/en/stable/blocklist_and_token_revoking/#revoking-refresh-tokens
@@ -113,4 +113,4 @@ class Logout(Resource):
         jti = jwt["jti"]
         ttype = jwt["type"]
         result = auth_service.logout_user(jti, ttype)
-        return result, 204
+        return result, int(HTTPStatus.NO_CONTENT)

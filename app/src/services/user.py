@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 
 from flask_restx import abort
 from flask_restx._http import HTTPStatus
@@ -18,7 +19,7 @@ class PaginationArgs:
 class UserService:
 
     @staticmethod
-    def get_detail_user(user_id: str):
+    def get_detail_user(user_id: str) -> User | Any:
         try:
             user = db.session.execute(
                 db.select(User).filter_by(
@@ -28,7 +29,7 @@ class UserService:
             abort(HTTPStatus.NOT_FOUND, "Not found")
 
     @staticmethod
-    def get_login_history(user_id: str, body: dict):
+    def get_login_history(user_id: str, body: dict) -> Any:
         try:
             pagination_args = PaginationArgs(**body)
             queryset = UserLoginHistory.query.filter_by(user_id=user_id)

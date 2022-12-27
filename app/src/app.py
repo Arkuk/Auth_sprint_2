@@ -1,3 +1,5 @@
+import logging
+
 import click
 from flask import Flask, request
 from flask_jwt_extended import JWTManager
@@ -7,9 +9,11 @@ from passlib.hash import argon2
 from services.oauth import oauth
 from api import api
 from core.jaeger import init_jaeger
+from core.config import settings
 from db.postgres import db
 from db.redis import limiter
 from db.redis import jwt_redis_blocklist
+from sqlalchemy.exc import NoResultFound
 from models.role import Role
 from models.user import (User,
                          SocialAccount)
@@ -31,10 +35,12 @@ def create_app(config=None):
     api.init_app(app)
     # инициализация jwt
     jwt = JWTManager(app)
-    # ratelimit
-    limiter.init_app(app)
-    # tracer
-    init_jaeger(app)
+
+    if settings.DEBUG:
+        # ratelimit
+        limiter.init_app(app)
+        # tracer
+        init_jaeger(app)
 
     @app.before_request
     def before_request():
@@ -46,8 +52,12 @@ def create_app(config=None):
     def create_roles():
         roles = ("admin", "user", "subscriber")
         for role in roles:
-            db.session.add(Role(name=role))
-            db.session.commit()
+            try:
+                db.session.execute(db.select(Role).filter_by(name=role)).one()
+                logging.warning(f'role {role} is exists')
+            except NoResultFound:
+                db.session.add(Role(name=role))
+                db.session.commit()
 
     @app.cli.command("createsuperuser")
     @click.argument(
@@ -55,16 +65,21 @@ def create_app(config=None):
     )
     @click.argument("password")
     def create_superuser(username, password):
-        admin_role_id = db.session.execute(
-            db.select(Role).filter_by(name="admin")
-        ).one()
-        new_user = User(
-            username=username,
-            password=argon2.using(rounds=4).hash(password),
-            roles=list(admin_role_id),
-        )
-        db.session.add(new_user)
-        db.session.commit()
+        try:
+            db.session.execute(db.select(User).filter_by(username='admin')).one()
+            logging.warning('admin is exists')
+        except NoResultFound:
+            admin_role_id = db.session.execute(
+                db.select(Role).filter_by(name='admin')
+            ).one()
+            new_user = User(
+                username=username,
+                password=argon2.using(rounds=4).hash(password),
+                roles=list(admin_role_id),
+            )
+
+            db.session.add(new_user)
+            db.session.commit()
 
     @jwt.token_in_blocklist_loader
     def check_if_token_is_revoked(jwt_header, jwt_payload: dict):

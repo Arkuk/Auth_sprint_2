@@ -1,3 +1,5 @@
+from typing import Any
+
 from flask_restx import abort
 from flask_restx._http import HTTPStatus
 
@@ -14,7 +16,7 @@ class RoleService:
         return roles
 
     @staticmethod
-    def create_role(body: dict):
+    def create_role(body: dict) -> Role | Any:
         """Создание новой роли, если роль уже существует, вернется сообщение об ошибке"""
         name = body["name"]
         role = db.session.query(Role).filter_by(name=name).all()
@@ -27,7 +29,7 @@ class RoleService:
             abort(HTTPStatus.CONFLICT, "Role is already exist")
 
     @staticmethod
-    def update_role(body: dict):
+    def update_role(body: dict) -> Role | Any:
         """Изменить название роли"""
         role_id = body["id"]
         name = body["name"]
@@ -40,7 +42,7 @@ class RoleService:
             abort(HTTPStatus.CONFLICT, "No role to update")
 
     @staticmethod
-    def delete_role(body: dict):
+    def delete_role(body: dict) -> str | Any:
         """Удаление конкретной роли, если роль присвоена какому-либо пользователю, получим сообщение об ошибке"""
         role_id = body["id"]
         query = user_role.select().where(user_role.c.role_id == role_id)

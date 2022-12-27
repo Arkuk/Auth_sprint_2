@@ -3,7 +3,7 @@
 ## Как запустить проект
 **1) Склонировать проект**
 ```commandline
-git clone https://github.com/Arkuk/Auth_sprint_1.git
+git clone https://github.com/Arkuk/Auth_sprint_2.git
 ```
 **2) Перейти в папку Auth_sprint_2**
 ```commandline

@@ -2,6 +2,7 @@ from functools import lru_cache
 import string
 from secrets import choice as secrets_choice
 from abc import abstractmethod
+from typing import Any
 
 from authlib.integrations.flask_client import OAuth
 from sqlalchemy.exc import NoResultFound
@@ -46,7 +47,7 @@ class OauthService:
         )
         return oauth.create_client(self.name)
 
-    def redirect_to_provider(self, provider):
+    def redirect_to_provider(self, provider: str) -> Any:
         return self.client.authorize_redirect(
             f'{self.redirect_url}?provider={provider}')
 
@@ -56,7 +57,7 @@ class OauthService:
     def get_user_info(self):
         return self.client.userinfo()
 
-    def check_social_acc(self, social_id):
+    def check_social_acc(self, social_id: int | str) -> SocialAccount | bool:
         try:
             user = db.session.execute(
                 db.select(SocialAccount).filter_by(social_id=str(social_id),
@@ -71,11 +72,11 @@ class OauthService:
         pass
 
     @staticmethod
-    def generate_random_string(len: int):
+    def generate_random_string(len: int) -> str:
         alphabet = string.ascii_letters + string.digits
         return ''.join(secrets_choice(alphabet) for _ in range(len))
 
-    def create_user_body(self, username):
+    def create_user_body(self, username: str) -> dict:
         username = username + self.generate_random_string(5)
         password = self.generate_random_string(10)
         return {
@@ -84,7 +85,7 @@ class OauthService:
             'password2': password
         }
 
-    def authorization_user(self, user_agent, username, social_id):
+    def authorization_user(self, user_agent: str, username: str, social_id: int | str) -> dict:
         social_acc = self.check_social_acc(social_id)
         if not social_acc:
             user_body = self.create_user_body(username)

@@ -7,9 +7,9 @@ ENV PYTHONUNBUFFERED 1
 
 COPY ./src/requirements.txt .
 
-RUN apt update -y  \
-    && apt install netcat -y \
-    && pip install --upgrade pip  \
+RUN apt update -y && apt install netcat -y
+
+RUN pip install --upgrade pip  \
     && pip install -r requirements.txt
 
 COPY . .

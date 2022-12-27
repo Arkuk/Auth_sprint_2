@@ -2,6 +2,7 @@ from datetime import timedelta
 from dataclasses import dataclass
 from functools import wraps
 import logging
+from typing import Any
 
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 get_jwt, verify_jwt_in_request)
@@ -43,7 +44,7 @@ class BodyUserLogin:
 
 class AuthService:
     @staticmethod
-    def is_passwords_equal(password1: str, password2: str):
+    def is_passwords_equal(password1: str, password2: str) -> bool:
         """Сравнение паролей"""
         if password1 == password2:
             return True
@@ -83,7 +84,7 @@ class AuthService:
     def validate_password(password: str, hash_password: str) -> bool:
         return argon2.verify(password, hash_password)
 
-    def create_user(self, body: dict):
+    def create_user(self, body: dict) -> User | Any:
         body_user_create = BodyUserCreate(**body)
         if self.is_passwords_equal(
                 body_user_create.password1, body_user_create.password2):
@@ -104,7 +105,7 @@ class AuthService:
         else:
             abort(HTTPStatus.CONFLICT, "Passwords dont match")
 
-    def change_password(self, body: dict, user_id: str):
+    def change_password(self, body: dict, user_id: str) -> Any:
         body_user_edit = BodyUserEdit(**body)
         user_in_base = self.check_for_id_in_base(user_id)
         if user_in_base:
@@ -125,14 +126,14 @@ class AuthService:
             abort(HTTPStatus.BAD_REQUEST, "Wrong user")
 
     @staticmethod
-    def create_record_history(user_id, user_agent):
+    def create_record_history(user_id: str, user_agent: str) -> bool:
         new_history_record = UserLoginHistory(
             user_id=user_id, user_agent=user_agent)
         db.session.add(new_history_record)
         db.session.commit()
         return True
 
-    def login_user(self, body: dict, user_agent: str):
+    def login_user(self, body: dict, user_agent: str) -> dict | Any:
         body_user_login = BodyUserLogin(**body)
         user_in_base = self.check_for_useername_in_base(
             body_user_login.username)
@@ -151,14 +152,14 @@ class AuthService:
     def add_token_to_blacklist(jti: str, access_expires: timedelta):
         jwt_redis_blocklist.set(jti, "", ex=access_expires)
 
-    def refresh_token(self, jwt: dict):
+    def refresh_token(self, jwt: dict) -> dict:
         user_id = jwt["sub"]
         jti = jwt["jti"]
         tokens = self.create_tokens(user_id)
         self.add_token_to_blacklist(jti, settings.JWT_REFRESH_TOKEN_EXPIRES)
         return tokens
 
-    def logout_user(self, jti: str, ttype: str):
+    def logout_user(self, jti: str, ttype: str) -> tuple:
         if ttype == "access":
             self.add_token_to_blacklist(jti, settings.JWT_ACCESS_TOKEN_EXPIRES)
             return {"status": "Access token is exist"}, HTTPStatus.NO_CONTENT
@@ -214,7 +215,7 @@ class AuthService:
         return wrapper
 
     @staticmethod
-    def func_check_roles(name_roles):
+    def func_check_roles(name_roles: list) -> bool | Any:
         name_roles_jwt = get_jwt()["roles"]
         # Пересечение ролей для ручки и ролей в токене
         if list(set(name_roles) & set(name_roles_jwt)):

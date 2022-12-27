@@ -7,6 +7,7 @@ load_dotenv()
 
 
 class Settings(object):
+    DEBUG = os.environ.get('DEBUG', False) == 'True'
     SQLALCHEMY_DATABASE_URI = (
         f"postgresql:"
         f'//{os.getenv("AUTH_POSTGRES_USER")}:'

@@ -1,3 +1,5 @@
+from typing import Any
+
 from flask_restx import abort
 from flask_restx._http import HTTPStatus
 
@@ -6,13 +8,13 @@ from models.user_role import user_role
 
 
 class UserRoles:
-    def get_user_roles(self, user_id):
+    def get_user_roles(self, user_id: str) -> Any:
         """Получить список ролей конкретного пользователя"""
         query = user_role.select().where(user_role.c.user_id == user_id)
         roles_id = db.session.execute(query).all()
         return roles_id
 
-    def assign_role(self, user_id, body: dict):
+    def assign_role(self, user_id: str, body: dict) -> Any:
         """Присвоение роли конкретному пользователю"""
         role_id = body["role_id"]
         role_query = (
@@ -29,7 +31,7 @@ class UserRoles:
         else:
             abort(HTTPStatus.CONFLICT, "Role is already assigned")
 
-    def discard_role(self, user_id, body: dict):
+    def discard_role(self, user_id: str, body: dict) -> Any:
         """Удаление роли у пользователя"""
         role_id = body["role_id"]
         role = (

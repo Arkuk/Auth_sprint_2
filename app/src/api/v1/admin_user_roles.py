@@ -19,7 +19,7 @@ class Roles(Resource):
     @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def get(self, user_id):
         roles = user_roles.get_user_roles(user_id)
-        return roles, 200
+        return roles, int(HTTPStatus.OK)
 
     @auth_service.verify_token()
     @auth_service.check_roles(["admin"])
@@ -29,7 +29,7 @@ class Roles(Resource):
     @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def post(self, user_id):
         roles = user_roles.assign_role(user_id, api.payload)
-        return roles, 201
+        return roles, int(HTTPStatus.CREATED)
 
     @auth_service.verify_token()
     @auth_service.check_roles(["admin"])
@@ -39,4 +39,4 @@ class Roles(Resource):
     @api.response(int(HTTPStatus.FORBIDDEN), "Permission denied")
     def delete(self, user_id):
         roles = user_roles.discard_role(user_id, api.payload)
-        return roles, 204
+        return roles, int(HTTPStatus.NO_CONTENT)

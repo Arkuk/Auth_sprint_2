@@ -32,7 +32,7 @@ class Register(Resource):
     @api.response(int(HTTPStatus.BAD_REQUEST), "Bad request")
     def post(self):
         result = auth_service.create_user(api.payload)
-        return result, 201
+        return result, int(HTTPStatus.CREATED)
 
 
 @api.route("/login")
@@ -44,7 +44,7 @@ class Login(Resource):
     def post(self):
         user_agent = parser.parse_args()["User-Agent"]
         result = auth_service.login_user(api.payload, user_agent)
-        return result, 200
+        return result, int(HTTPStatus.OK)
 
 
 @api.route("/identity/login/<provider>")
@@ -65,4 +65,4 @@ class IdentityAuthorization(Resource):
         username, social_id = oauth_client.get_data_from_provider()
         tokens = oauth_client.authorization_user(
             user_agent, username, social_id)
-        return tokens
+        return tokens, int(HTTPStatus.OK)
