@@ -42,11 +42,11 @@ def create_app(config=None):
         # tracer
         init_jaeger(app)
 
-    @app.before_request
-    def before_request():
-        request_id = request.headers.get('X-Request-Id')
-        if not request_id:
-            raise RuntimeError('request id is required')
+        @app.before_request
+        def before_request():
+            request_id = request.headers.get('X-Request-Id')
+            if not request_id:
+                raise RuntimeError('request id is required')
 
     @app.cli.command("create-roles")
     def create_roles():

@@ -16,6 +16,7 @@ class Settings(object):
         f'{os.getenv("AUTH_POSTGRES_NAME")}'
     )
     JWT_TOKEN_LOCATION = "headers"
+    JWT_ALGORITHM = "HS256"
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
